@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2012 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import android.app.Activity;
-
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.test15.ebean.GenericBean;
+import org.androidannotations.test15.ebean.SomeBean;
 import org.androidannotations.test15.instancestate.MySerializableBean;
+
+import android.app.Activity;
 
 @EActivity
 public class ThreadActivity extends Activity {
@@ -37,6 +39,11 @@ public class ThreadActivity extends Activity {
 	@Background
 	void emptyBackgroundMethod() {
 
+	}
+	
+	@Background(delay = 1000)
+	void emptyDelayedBackgroundMethod() {
+		
 	}
 
 	@UiThread
@@ -56,6 +63,11 @@ public class ThreadActivity extends Activity {
 
 	@Background
 	void genericBackgroundMethod(List<Map<String, List<Set<MySerializableBean[]>>>> param) {
+
+	}
+
+	@Background
+	void genericBackgroundMethod(Set<? extends GenericBean<? extends SomeBean>> param) {
 
 	}
 

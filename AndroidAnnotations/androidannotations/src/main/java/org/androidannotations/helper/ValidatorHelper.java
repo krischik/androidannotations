@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2012 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,8 +21,12 @@ import static org.androidannotations.helper.AndroidConstants.LOG_ERROR;
 import static org.androidannotations.helper.AndroidConstants.LOG_INFO;
 import static org.androidannotations.helper.AndroidConstants.LOG_VERBOSE;
 import static org.androidannotations.helper.AndroidConstants.LOG_WARN;
+import static org.androidannotations.helper.CanonicalNameConstants.CLIENT_HTTP_REQUEST_INTERCEPTOR;
 import static org.androidannotations.helper.CanonicalNameConstants.HTTP_MESSAGE_CONVERTER;
+import static org.androidannotations.helper.CanonicalNameConstants.INTERNET_PERMISSION;
 import static org.androidannotations.helper.ModelConstants.GENERATION_SUFFIX;
+import static org.androidannotations.helper.ModelConstants.VALID_ENHANCED_COMPONENT_ANNOTATIONS;
+import static org.androidannotations.helper.ModelConstants.VALID_ENHANCED_VIEW_SUPPORT_ANNOTATIONS;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -47,14 +51,8 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.EApplication;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.EProvider;
-import org.androidannotations.annotations.EReceiver;
-import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.EView;
-import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.Trace;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.Delete;
@@ -78,7 +76,6 @@ import org.androidannotations.validation.IsValid;
 
 public class ValidatorHelper {
 
-	private static final List<String> ANDROID_SHERLOCK_MENU_ITEM_QUALIFIED_NAMES = asList(CanonicalNameConstants.MENU_ITEM, CanonicalNameConstants.SHERLOCK_MENU_ITEM);
 	private static final List<String> ANDROID_FRAGMENT_QUALIFIED_NAMES = asList(CanonicalNameConstants.FRAGMENT, CanonicalNameConstants.SUPPORT_V4_FRAGMENT);
 
 	private static final String METHOD_NAME_SET_ROOT_URL = "setRootUrl";
@@ -89,16 +86,13 @@ public class ValidatorHelper {
 
 	private static final Collection<Integer> VALID_LOG_LEVELS = Arrays.asList(LOG_VERBOSE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR);
 
-	@SuppressWarnings("unchecked")
-	private static final List<Class<? extends Annotation>> VALID_ENHANCED_VIEW_SUPPORT_ANNOTATIONS = asList(EActivity.class, EViewGroup.class, EView.class, EBean.class, EFragment.class);
-
-	@SuppressWarnings("unchecked")
-	private static final List<Class<? extends Annotation>> VALID_ENHANCED_COMPONENT_ANNOTATIONS = asList(EApplication.class, EActivity.class, EViewGroup.class, EView.class, EBean.class, EService.class, EReceiver.class, EProvider.class, EFragment.class);
-
 	protected final TargetAnnotationHelper annotationHelper;
+
+	public final ValidatorParameterHelper param;
 
 	public ValidatorHelper(TargetAnnotationHelper targetAnnotationHelper) {
 		annotationHelper = targetAnnotationHelper;
+		param = new ValidatorParameterHelper(annotationHelper);
 	}
 
 	public void isNotFinal(Element element, IsValid valid) {
@@ -154,6 +148,13 @@ public class ValidatorHelper {
 		if (annotationHelper.isPrivate(element)) {
 			valid.invalidate();
 			annotationHelper.printAnnotationError(element, "%s cannot be used on a private element");
+		}
+	}
+
+	public void isPublic(Element element, IsValid valid) {
+		if (!annotationHelper.isPublic(element)) {
+			valid.invalidate();
+			annotationHelper.printAnnotationError(element, "%s cannot be used on a non public element");
 		}
 	}
 
@@ -418,24 +419,6 @@ public class ValidatorHelper {
 		}
 	}
 
-	public void urlVariableNamesExistInParameters(ExecutableElement element, List<String> variableNames, IsValid valid) {
-
-		List<? extends VariableElement> parameters = element.getParameters();
-
-		List<String> parametersName = new ArrayList<String>();
-		for (VariableElement parameter : parameters) {
-			parametersName.add(parameter.getSimpleName().toString());
-		}
-
-		for (String variableName : variableNames) {
-			if (!parametersName.contains(variableName)) {
-				valid.invalidate();
-				annotationHelper.printAnnotationError(element, "%s annotated method has an url variable which name could not be found in the method parameters: " + variableName);
-				return;
-			}
-		}
-	}
-
 	public void doesntThrowException(Element element, IsValid valid) {
 		ExecutableElement executableElement = (ExecutableElement) element;
 
@@ -450,7 +433,7 @@ public class ValidatorHelper {
 
 		TypeKind returnKind = returnType.getKind();
 
-		if (returnKind != TypeKind.BOOLEAN && returnKind != TypeKind.VOID && !returnType.toString().equals("java.lang.Boolean")) {
+		if (returnKind != TypeKind.BOOLEAN && returnKind != TypeKind.VOID && !returnType.toString().equals(CanonicalNameConstants.BOOLEAN)) {
 			valid.invalidate();
 			annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with a boolean or a void return type");
 		}
@@ -465,54 +448,13 @@ public class ValidatorHelper {
 		}
 	}
 
-	public void zeroOrOneParameter(ExecutableElement executableElement, IsValid valid) {
-		List<? extends VariableElement> parameters = executableElement.getParameters();
+	public void returnTypeIsNotVoid(ExecutableElement executableElement, IsValid valid) {
+		TypeMirror returnType = executableElement.getReturnType();
 
-		if (parameters.size() > 1) {
+		if (returnType.getKind() == TypeKind.VOID) {
 			valid.invalidate();
-			annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with zero or one parameter, instead of " + parameters.size());
+			annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with a return type non void");
 		}
-	}
-
-	public void zeroParameter(ExecutableElement executableElement, IsValid valid) {
-		List<? extends VariableElement> parameters = executableElement.getParameters();
-
-		if (parameters.size() > 0) {
-			valid.invalidate();
-			annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with zero parameter, instead of " + parameters.size());
-		}
-	}
-
-	public void zeroOrOneViewParameters(ExecutableElement executableElement, IsValid valid) {
-		zeroOrOneSpecificParameter(executableElement, CanonicalNameConstants.VIEW, valid);
-	}
-
-	public void zeroOrOneMenuItemParameters(ExecutableElement executableElement, IsValid valid) {
-		zeroOrOneSpecificParameter(executableElement, ANDROID_SHERLOCK_MENU_ITEM_QUALIFIED_NAMES, valid);
-	}
-
-	public void zeroOrOneSpecificParameter(ExecutableElement executableElement, String parameterTypeQualifiedName, IsValid valid) {
-		zeroOrOneSpecificParameter(executableElement, Arrays.asList(parameterTypeQualifiedName), valid);
-	}
-
-	public void zeroOrOneSpecificParameter(ExecutableElement executableElement, List<String> parameterTypeQualifiedNames, IsValid valid) {
-
-		zeroOrOneParameter(executableElement, valid);
-
-		List<? extends VariableElement> parameters = executableElement.getParameters();
-
-		if (parameters.size() == 1) {
-			VariableElement parameter = parameters.get(0);
-			TypeMirror parameterType = parameter.asType();
-			if (!parameterTypeQualifiedNames.contains(parameterType.toString())) {
-				valid.invalidate();
-				annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with no parameter or a parameter of type " + parameterTypeQualifiedNames + ", not " + parameterType);
-			}
-		}
-	}
-
-	public void zeroOrOneBundleParameter(ExecutableElement executableElement, IsValid valid) {
-		zeroOrOneSpecificParameter(executableElement, CanonicalNameConstants.BUNDLE, valid);
 	}
 
 	public void extendsActivity(Element element, IsValid valid) {
@@ -584,29 +526,6 @@ public class ValidatorHelper {
 		}
 	}
 
-	public void upperclassOfRegisteredApplication(Element element, AndroidManifest manifest, IsValid valid) {
-
-		if (manifest.isLibraryProject()) {
-			return;
-		}
-
-		String applicationClassName = manifest.getApplicationClassName();
-		if (applicationClassName != null) {
-			if (applicationClassName.endsWith(GENERATION_SUFFIX)) {
-				applicationClassName = applicationClassName.substring(0, applicationClassName.length() - GENERATION_SUFFIX.length());
-			}
-			TypeMirror elementType = element.asType();
-			TypeMirror manifestType = annotationHelper.typeElementFromQualifiedName(applicationClassName).asType();
-			if (!annotationHelper.isSubtype(manifestType, elementType)) {
-				valid.invalidate();
-				annotationHelper.printAnnotationError(element, "%s can only be used on an element that is an instance of the following class (or one of it's superclass): " + applicationClassName);
-			}
-		} else {
-			valid.invalidate();
-			annotationHelper.printAnnotationError(element, "No application class is registered in the AndroidManifest.xml");
-		}
-	}
-
 	public void applicationRegistered(Element element, AndroidManifest manifest, IsValid valid) {
 
 		if (manifest.isLibraryProject()) {
@@ -643,7 +562,7 @@ public class ValidatorHelper {
 		/*
 		 * The type is not available yet because it has just been generated
 		 */
-		if (type instanceof ErrorType) {
+		if (type instanceof ErrorType || type.getKind() == TypeKind.ERROR) {
 			String elementTypeName = type.toString();
 
 			boolean sharedPrefValidatedInRound = false;
@@ -699,24 +618,6 @@ public class ValidatorHelper {
 			if (!annotationHelper.isSubtype(elementType, expectedType)) {
 				valid.invalidate();
 				annotationHelper.printAnnotationError(element, "%s can only be used on an element that extends " + typeQualifiedName);
-			}
-		}
-	}
-
-	public void hasOneOrTwoParametersAndFirstIsBoolean(ExecutableElement executableElement, IsValid valid) {
-		List<? extends VariableElement> parameters = executableElement.getParameters();
-
-		if (parameters.size() < 1 || parameters.size() > 2) {
-			valid.invalidate();
-			annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with 1 or 2 parameter, instead of " + parameters.size());
-		} else {
-			VariableElement firstParameter = parameters.get(0);
-
-			TypeKind parameterKind = firstParameter.asType().getKind();
-
-			if (parameterKind != TypeKind.BOOLEAN && !firstParameter.toString().equals("java.lang.Boolean")) {
-				valid.invalidate();
-				annotationHelper.printAnnotationError(executableElement, "the first parameter should be a boolean");
 			}
 		}
 	}
@@ -778,46 +679,6 @@ public class ValidatorHelper {
 		if (!androidSystemServices.contains(serviceType)) {
 			valid.invalidate();
 			annotationHelper.printAnnotationError(element, "Unknown service type: " + serviceType.toString());
-		}
-	}
-
-	public void hasOneMotionEventOrTwoMotionEventViewParameters(ExecutableElement executableElement, IsValid valid) {
-		List<? extends VariableElement> parameters = executableElement.getParameters();
-
-		if (parameters.size() < 1 || parameters.size() > 2) {
-			valid.invalidate();
-			annotationHelper.printAnnotationError(executableElement, "%s can only be used on a method with 1 (MotionEvent) or 2 (MotionEvent, View) parameters, instead of " + parameters.size());
-		} else {
-			VariableElement firstParameter = parameters.get(0);
-			String firstParameterType = firstParameter.asType().toString();
-			if (!firstParameterType.equals(CanonicalNameConstants.MOTION_EVENT)) {
-				valid.invalidate();
-				annotationHelper.printAnnotationError(executableElement, "the first parameter must be a " + CanonicalNameConstants.MOTION_EVENT + ", not a " + firstParameterType);
-			}
-			if (parameters.size() == 2) {
-				VariableElement secondParameter = parameters.get(1);
-				String secondParameterType = secondParameter.asType().toString();
-				if (!secondParameterType.equals(CanonicalNameConstants.VIEW)) {
-					valid.invalidate();
-					annotationHelper.printAnnotationError(executableElement, "the second parameter must be a " + CanonicalNameConstants.VIEW + ", not a " + secondParameterType);
-				}
-			}
-		}
-	}
-
-	public void hasOneOrTwoParametersAndFirstIsDb(ExecutableElement executableElement, IsValid valid) {
-		List<? extends VariableElement> parameters = executableElement.getParameters();
-
-		if (parameters.size() < 1) {
-			valid.invalidate();
-			annotationHelper.printAnnotationError(executableElement, "There should be at least 1 parameter: a " + CanonicalNameConstants.SQLITE_DATABASE);
-		} else {
-			VariableElement firstParameter = parameters.get(0);
-			String firstParameterType = firstParameter.asType().toString();
-			if (!firstParameterType.equals(CanonicalNameConstants.SQLITE_DATABASE)) {
-				valid.invalidate();
-				annotationHelper.printAnnotationError(executableElement, "the first parameter must be a " + CanonicalNameConstants.SQLITE_DATABASE + ", not a " + firstParameterType);
-			}
 		}
 	}
 
@@ -889,7 +750,7 @@ public class ValidatorHelper {
 		T defaultAnnotation = method.getAnnotation(annotationClass);
 		if (defaultAnnotation != null) {
 			if (!condition.correctReturnType(method.getReturnType())) {
-				annotationHelper.printAnnotationError(method, annotationClass, TargetAnnotationHelper.annotationName(annotationClass) + " can only be used on a method that returns a " + expectedReturnType);
+				annotationHelper.printAnnotationError(method, annotationClass.getName(), TargetAnnotationHelper.annotationName(annotationClass) + " can only be used on a method that returns a " + expectedReturnType);
 			}
 		}
 	}
@@ -1071,7 +932,7 @@ public class ValidatorHelper {
 			}
 
 			if (elementType != null) {
-				TypeElement parcelableType = annotationHelper.typeElementFromQualifiedName("android.os.Parcelable");
+				TypeElement parcelableType = annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.PARCELABLE);
 				TypeElement serializableType = annotationHelper.typeElementFromQualifiedName("java.io.Serializable");
 				if (!annotationHelper.isSubtype(elementType, parcelableType) && !annotationHelper.isSubtype(elementType, serializableType)) {
 					annotationHelper.printAnnotationError(element, "Unrecognized type. Please let your attribute be primitive or implement Serializable or Parcelable");
@@ -1157,4 +1018,58 @@ public class ValidatorHelper {
 		}
 
 	}
+
+	public void isDebuggable(Element element, AndroidManifest androidManifest, IsValid valid) {
+		if (!androidManifest.isDebuggable()) {
+			valid.invalidate();
+			annotationHelper.printAnnotationError(element, "The application must be in debuggable mode. Please set android:debuggable to true in your AndroidManifest.xml file.");
+		}
+	}
+
+	public void hasInternetPermission(Element element, AndroidManifest androidManifest, IsValid valid) {
+		String internetPermissionQualifiedName = INTERNET_PERMISSION;
+
+		List<String> permissionQualifiedNames = androidManifest.getPermissionQualifiedNames();
+		if (!permissionQualifiedNames.contains(internetPermissionQualifiedName)) {
+			valid.invalidate();
+			annotationHelper.printAnnotationError(element, "Your application must require the INTERNET permission.");
+		}
+	}
+
+	public void validateInterceptors(Element element, IsValid valid) {
+		TypeMirror clientHttpRequestInterceptorType = annotationHelper.typeElementFromQualifiedName(CLIENT_HTTP_REQUEST_INTERCEPTOR).asType();
+		TypeMirror clientHttpRequestInterceptorTypeErased = annotationHelper.getTypeUtils().erasure(clientHttpRequestInterceptorType);
+		List<DeclaredType> interceptors = annotationHelper.extractAnnotationClassArrayParameter(element, annotationHelper.getTarget(), "interceptors");
+		if (interceptors == null) {
+			return;
+		}
+		for (DeclaredType interceptorType : interceptors) {
+			TypeMirror erasedInterceptorType = annotationHelper.getTypeUtils().erasure(interceptorType);
+			if (annotationHelper.isSubtype(erasedInterceptorType, clientHttpRequestInterceptorTypeErased)) {
+				Element interceptorElement = interceptorType.asElement();
+				if (interceptorElement.getKind().isClass()) {
+					if (!annotationHelper.isAbstract(interceptorElement)) {
+						List<ExecutableElement> constructors = ElementFilter.constructorsIn(interceptorElement.getEnclosedElements());
+						for (ExecutableElement constructor : constructors) {
+							if (annotationHelper.isPublic(constructor) && constructor.getParameters().isEmpty()) {
+								return;
+							}
+						}
+						valid.invalidate();
+						annotationHelper.printAnnotationError(element, "The interceptor class must have a public no argument constructor");
+					} else {
+						valid.invalidate();
+						annotationHelper.printAnnotationError(element, "The interceptor class must not be abstract");
+					}
+				} else {
+					valid.invalidate();
+					annotationHelper.printAnnotationError(element, "The interceptor class must be a class");
+				}
+			} else {
+				valid.invalidate();
+				annotationHelper.printAnnotationError(element, "The interceptor class must be a subtype of " + CLIENT_HTTP_REQUEST_INTERCEPTOR);
+			}
+		}
+	}
+
 }

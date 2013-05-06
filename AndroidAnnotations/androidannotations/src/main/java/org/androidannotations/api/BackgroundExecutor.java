@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2012 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,17 +17,27 @@ package org.androidannotations.api;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class BackgroundExecutor {
 
 	private static Executor executor = Executors.newCachedThreadPool();
+	private static ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(2 * Runtime.getRuntime().availableProcessors());
 
 	public static void execute(Runnable runnable) {
 		executor.execute(runnable);
 	}
-	
+
 	public static void setExecutor(Executor executor) {
 		BackgroundExecutor.executor = executor;
 	}
 
+	public static void executeDelayed(Runnable runnable, long delay) {
+		scheduledExecutor.schedule(runnable, delay, TimeUnit.MILLISECONDS);
+	}
+
+	public static void setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {
+		BackgroundExecutor.scheduledExecutor = scheduledExecutor;
+	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2012 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -43,6 +43,9 @@ public class ExtraInjectedActivity extends Activity {
 
 	@Extra
 	String extraWithoutValue;
+	
+	@Extra
+	ParcelableSerializableData parcelableSerializableData;
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -53,5 +56,6 @@ public class ExtraInjectedActivity extends Activity {
 		ExtraInjectedActivity_.intent(this).arrayExtra(null).start();
 		ExtraInjectedActivity_.intent(this).intExtra(42).get();
 		ExtraInjectedActivity_.intent(this).stringExtra("hello").startForResult(42);
+		ExtraInjectedActivity_.intent(this).parcelableSerializableData(new ParcelableSerializableData()).get();
 	}
 }
