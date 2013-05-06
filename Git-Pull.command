@@ -23,8 +23,8 @@
 #  $HeadURL: https://uiq3.svn.sourceforge.net/svnroot/uiq3/trunk/Java/Utilities/Start-Vim.command $
 ########################################################### }}}1 ###########
 
-git pull https://github.com/JakeWharton/Android-ViewPagerIndicator.git
-git pull https://github.com/krischik/Android-ViewPagerIndicator.git
+git pull git://github.com/excilys/androidannotations.git
+git pull git@github.com:krischik/androidannotations.git
 git push
 
 # vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
