@@ -80,6 +80,8 @@ public class ValidatorHelper {
 
 	private static final String METHOD_NAME_SET_ROOT_URL = "setRootUrl";
 
+	private static final String METHOD_NAME_GET_ROOT_URL = "getRootUrl";
+
 	private static final List<String> VALID_PREF_RETURN_TYPES = Arrays.asList("int", "boolean", "float", "long", CanonicalNameConstants.STRING);
 
 	private static final List<String> INVALID_PREF_METHOD_NAMES = Arrays.asList("edit", "getSharedPreferences", "clear", "getEditor", "apply");
@@ -90,9 +92,12 @@ public class ValidatorHelper {
 
 	public final ValidatorParameterHelper param;
 
+	private final ThirdPartyLibHelper thirdPartyLibHelper;
+
 	public ValidatorHelper(TargetAnnotationHelper targetAnnotationHelper) {
 		annotationHelper = targetAnnotationHelper;
 		param = new ValidatorParameterHelper(annotationHelper);
+		thirdPartyLibHelper = new ThirdPartyLibHelper(annotationHelper);
 	}
 
 	public void isNotFinal(Element element, IsValid valid) {
@@ -497,21 +502,39 @@ public class ValidatorHelper {
 		extendsType(element, CanonicalNameConstants.CONTEXT, valid);
 	}
 
+	public void extendsMenuItem(Element element, IsValid valid) {
+		Element enclosingElement = element.getEnclosingElement();
+		String enclosingQualifiedName = enclosingElement.asType().toString();
+		TypeElement enclosingTypeElement = annotationHelper.typeElementFromQualifiedName(enclosingQualifiedName);
+
+		if (enclosingTypeElement != null) {
+			if (thirdPartyLibHelper.usesActionBarSherlock(enclosingTypeElement)) {
+				extendsType(element, CanonicalNameConstants.SHERLOCK_MENU_ITEM, valid);
+			} else {
+				extendsType(element, CanonicalNameConstants.MENU_ITEM, valid);
+			}
+		}
+	}
+
 	public void extendsOrmLiteDaoWithValidModelParameter(Element element, IsValid valid) {
 		TypeMirror elementType = element.asType();
 
 		TypeMirror modelTypeMirror = annotationHelper.extractAnnotationParameter(element, "model");
 
 		TypeElement daoTypeElement = annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.DAO);
+		TypeElement runtimeExceptionDaoTypeElement = annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.RUNTIME_EXCEPTION_DAO);
+
 		if (daoTypeElement != null) {
 
 			TypeMirror wildcardType = annotationHelper.getTypeUtils().getWildcardType(null, null);
 			DeclaredType daoParameterizedType = annotationHelper.getTypeUtils().getDeclaredType(daoTypeElement, modelTypeMirror, wildcardType);
+			DeclaredType runtimeExceptionDaoParameterizedType = annotationHelper.getTypeUtils().getDeclaredType(runtimeExceptionDaoTypeElement, modelTypeMirror, wildcardType);
 
-			// Checks that elementType extends Dao<ModelType, ?>
-			if (!annotationHelper.isSubtype(elementType, daoParameterizedType)) {
+			// Checks that elementType extends Dao<ModelType, ?> or RuntimeExceptionDao<ModelType, ?>
+			if (!annotationHelper.isSubtype(elementType, daoParameterizedType) && !annotationHelper.isSubtype(elementType, runtimeExceptionDaoParameterizedType)) {
 				valid.invalidate();
-				annotationHelper.printAnnotationError(element, "%s can only be used on an element that extends " + daoParameterizedType.toString());
+				annotationHelper.printAnnotationError(element, "%s can only be used on an element that extends " + daoParameterizedType.toString() //
+																									+  " or " +  runtimeExceptionDaoParameterizedType.toString());
 			}
 		}
 	}
@@ -763,6 +786,8 @@ public class ValidatorHelper {
 		boolean foundGetRestTemplateMethod = false;
 		boolean foundSetRestTemplateMethod = false;
 		boolean foundSetRootUrlMethod = false;
+		boolean foundGetRootUrlMethod = false;
+
 		for (Element enclosedElement : enclosedElements) {
 			if (enclosedElement.getKind() != ElementKind.METHOD) {
 				valid.invalidate();
@@ -778,8 +803,11 @@ public class ValidatorHelper {
 				}
 
 				if (!hasRestAnnotation) {
+
 					ExecutableElement executableElement = (ExecutableElement) enclosedElement;
 					TypeMirror returnType = executableElement.getReturnType();
+					String simpleName = executableElement.getSimpleName().toString();
+
 					if (returnType.toString().equals(CanonicalNameConstants.REST_TEMPLATE)) {
 						if (executableElement.getParameters().size() > 0) {
 							valid.invalidate();
@@ -791,6 +819,23 @@ public class ValidatorHelper {
 							} else {
 								foundGetRestTemplateMethod = true;
 							}
+						}
+					} else if (simpleName.equals(METHOD_NAME_GET_ROOT_URL)) {
+						if (!returnType.toString().equals(CanonicalNameConstants.STRING)) {
+							valid.invalidate();
+							annotationHelper.printError(enclosedElement, "The method getRootUrl must return String on a " + TargetAnnotationHelper.annotationName(Rest.class) + " annotated interface");
+						}
+
+						if (executableElement.getParameters().size() != 0) {
+							valid.invalidate();
+							annotationHelper.printError(enclosedElement, "The method getRootUrl cannot have parameters on a " + TargetAnnotationHelper.annotationName(Rest.class) + " annotated interface");
+						}
+
+						if (!foundGetRootUrlMethod) {
+							foundGetRootUrlMethod = true;
+						} else {
+							valid.invalidate();
+							annotationHelper.printError(enclosedElement, "The can be only one getRootUrl method on a " + TargetAnnotationHelper.annotationName(Rest.class) + " annotated interface");
 						}
 					} else if (returnType.getKind() == TypeKind.VOID) {
 						List<? extends VariableElement> parameters = executableElement.getParameters();
@@ -989,6 +1034,12 @@ public class ValidatorHelper {
 		TypeMirror httpMessageConverterType = annotationHelper.typeElementFromQualifiedName(HTTP_MESSAGE_CONVERTER).asType();
 		TypeMirror httpMessageConverterTypeErased = annotationHelper.getTypeUtils().erasure(httpMessageConverterType);
 		List<DeclaredType> converters = annotationHelper.extractAnnotationClassArrayParameter(element, annotationHelper.getTarget(), "converters");
+
+		if (converters == null) {
+			valid.invalidate();
+			return;
+		}
+
 		for (DeclaredType converterType : converters) {
 			TypeMirror erasedConverterType = annotationHelper.getTypeUtils().erasure(converterType);
 			if (annotationHelper.isSubtype(erasedConverterType, httpMessageConverterTypeErased)) {
