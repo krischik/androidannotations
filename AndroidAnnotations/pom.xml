@@ -182,6 +182,11 @@
             <name>${repo.name}</name>
             <url>${repo.url}</url>
         </repository>
+        <snapshotRepository>
+            <id>${repo.id}</id>
+            <name>${repo.name}</name>
+            <url>${repo.url}</url>
+        </snapshotRepository>
     </distributionManagement>
 
 	<build>
