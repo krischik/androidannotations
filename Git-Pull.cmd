@@ -14,7 +14,7 @@ SETLOCAL
     SET PATH=%PATH%;C:\opt\Git\bin
     SET PATH=%PATH%;C:\opt\Scala\2.10.0\bin
 
-    CALL scala -language:postfixOps -save %~f0 %*    
+    CALL scala -save %~f0 %*    
 ENDLOCAL
     
 GOTO :eof
@@ -22,8 +22,8 @@ GOTO :eof
 
 import scala.sys.process._
 
-"git" :: "pull" :: "https://github.com/excilys/androidannotations.git"  :: Nil !;
-"git" :: "pull" :: Nil !;
+("git" :: "pull" :: "https://github.com/excilys/androidannotations.git"		  :: Nil).!
+("git" :: "pull" :: "origin" :: "develop" :: Nil).!
 
 // vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 // vim: set textwidth=0 filetype=scala foldmethod=marker nospell :

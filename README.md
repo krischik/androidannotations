@@ -1,6 +1,3 @@
-Android ViewPagerIndicator
-==========================
-
 Paging indicator widgets that are compatible with the `ViewPager` from the
 [Android Support Library][2] to improve discoverability of content.
 
