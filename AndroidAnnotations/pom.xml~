@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -32,9 +33,9 @@
 			<id>py.ricau</id>
 			<name>Pierre-Yves Ricau</name>
 			<email>py.ricau@gmail.com</email>
-			<url>http://piwai.info</url>
-			<organization>Square, Inc</organization>
-			<organizationUrl>http://squareup.com</organizationUrl>
+			<url>http://blog.piwai.info</url>
+			<organization>Siine Ltd</organization>
+			<organizationUrl>http://www.siine.com</organizationUrl>
 			<roles>
 				<role>Owner</role>
 			</roles>
@@ -64,8 +65,7 @@
 		<developer>
 			<id>jzapata</id>
 			<name>Joan Zapata</name>
-			<email>zapata.joan@gmail.com</email>
-			<url>http://joanzapata.com</url>
+			<email>jzapata@excilys.com</email>
 			<organization>eBusiness Information</organization>
 			<organizationUrl>http://www.ebusinessinformation.fr</organizationUrl>
 			<roles>
@@ -174,6 +174,25 @@
 		</dependencies>
 	</dependencyManagement>
   <!-- Repositories –––––––––––––––––––––––––––––––––––––––––– {{{1 ––––– -->
+  <repositories>
+    <repository>
+      <id>Noser-Library</id>
+      <name>Noser-Library</name>
+      <url>https://ps.noser.com/svn/a20999002006/04_Software/repository</url>
+    </repository>
+    <repository>
+      <id>codehaus.org</id>
+      <name>Codehaus repository</name>
+      <url>http://repository.codehaus.org/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus.org</id>
+      <url>http://repository.codehaus.org</url>
+      <name>Codehaus repository</name>
+    </pluginRepository>
+  </pluginRepositories>
   <!-- ––––––––––––––––––––––––––––––––––––––––––––––––––––––– }}}1 ––––– -->
     <distributionManagement>
         <repository>
@@ -181,11 +200,6 @@
             <name>${repo.name}</name>
             <url>${repo.url}</url>
         </repository>
-        <snapshotRepository>
-            <id>${repo.id}</id>
-            <name>${repo.name}</name>
-            <url>${repo.url}</url>
-        </snapshotRepository>
     </distributionManagement>
 
 	<build>
@@ -238,14 +252,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.5</version>
-					<configuration>
-						<encoding>${project.build.sourceEncoding}</encoding>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
