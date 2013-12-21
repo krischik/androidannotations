@@ -17,20 +17,30 @@ package org.androidannotations.test15.sherlock;
 
 
 
+import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.test15.R;
 
 @EActivity
 @OptionsMenu(R.menu.my_menu)
 public class MySherlockActivity extends SherlockActivity {
 
+	@OptionsMenuItem
+	MenuItem menu_refresh;
+
 	boolean menuRefreshSelected;
 	boolean multipleMenuItems;
 	boolean menu_add;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
 
 	@OptionsItem
 	void menuRefreshSelected() {

@@ -46,21 +46,18 @@ public class RestTest extends AAProcessorTestHelper {
 	@Test
 	public void client_with_return_type() throws IOException {
 		CompileResult result = compileFiles(ClientWithResponseEntity.class);
-		assertCompilationErrorOn(ClientWithResponseEntity.class, "@Put", result);
-		assertCompilationErrorOn(ClientWithResponseEntity.class, "@Delete", result);
 		assertCompilationErrorOn(ClientWithResponseEntity.class, "@Options", result);
 		assertCompilationErrorOn(ClientWithResponseEntity.class, "@Head", result);
-		assertCompilationErrorCount(4, result);
+		assertCompilationErrorCount(2, result);
 	}
 
 	@Test
 	public void client_with_request_entity() throws IOException {
 		CompileResult result = compileFiles(ClientWithRequestEntity.class);
-		assertCompilationErrorOn(ClientWithRequestEntity.class, "@Delete", result);
 		assertCompilationErrorOn(ClientWithRequestEntity.class, "@Get", result);
 		assertCompilationErrorOn(ClientWithRequestEntity.class, "@Head", result);
 		assertCompilationErrorOn(ClientWithRequestEntity.class, "@Options", result);
-		assertCompilationErrorCount(4, result);
+		assertCompilationErrorCount(3, result);
 	}
 
 	@Test
@@ -81,4 +78,26 @@ public class RestTest extends AAProcessorTestHelper {
 		assertCompilationSuccessful(result);
 	}
 
+	@Test
+	public void client_with_wrong_enhanced_methods() throws IOException {
+		CompileResult result = compileFiles(ClientWithWrongEnhancedMethod.class);
+		assertCompilationErrorOn(ClientWithWrongEnhancedMethod.class, "Object getRestTemplate();", result);
+		assertCompilationErrorOn(ClientWithWrongEnhancedMethod.class, "String getURL();", result);
+		assertCompilationErrorOn(ClientWithWrongEnhancedMethod.class, "String getRootURL();", result);
+		assertCompilationErrorOn(ClientWithWrongEnhancedMethod.class, "String getRootURL(String param);", result);
+		assertCompilationErrorOn(ClientWithWrongEnhancedMethod.class, "boolean setRootURL();", result);
+		assertCompilationErrorCount(5, result);
+	}
+
+	@Test
+	public void client_with_wrong_interface() throws IOException {
+		CompileResult result = compileFiles(ClientWithWrongInterface.class);
+		assertCompilationErrorCount(1, result);
+	}
+
+	@Test
+	public void client_with_all_interfaces() throws IOException {
+		CompileResult result = compileFiles(ClientWithAllInterfaces.class);
+		assertCompilationSuccessful(result);
+	}
 }

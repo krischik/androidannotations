@@ -15,15 +15,14 @@
  */
 package org.androidannotations.test15;
 
-import static org.fest.assertions.Assertions.assertThat;
-
+import android.view.View;
+import android.widget.ListView;
+import android.widget.Spinner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import android.view.View;
-import android.widget.ListView;
-import android.widget.Spinner;
+import static org.fest.assertions.Assertions.assertThat;
 
 @RunWith(AndroidAnnotationsTestRunner.class)
 public class ItemClicksHandledActivityTest {
@@ -38,7 +37,8 @@ public class ItemClicksHandledActivityTest {
 	public void setup() {
 		activity = new ItemClicksHandledActivity_();
 		activity.onCreate(null);
-		clickedItem = activity.getResources().getStringArray(R.array.planets_array)[TESTED_CLICKED_INDEX];
+		clickedItem = activity.getResources().getStringArray(
+				R.array.planets_array)[TESTED_CLICKED_INDEX];
 	}
 
 	@Test
@@ -65,56 +65,77 @@ public class ItemClicksHandledActivityTest {
 
 	@Test
 	public void handlingSpinnerItemClickWithArgument() {
-		Spinner spinner = (Spinner) activity.findViewById(R.id.spinnerWithArgument);
+		Spinner spinner = (Spinner) activity
+				.findViewById(R.id.spinnerWithArgument);
 		long itemId = spinner.getAdapter().getItemId(TESTED_CLICKED_INDEX);
 		View view = spinner.getChildAt(TESTED_CLICKED_INDEX);
 
 		assertThat(activity.spinnerWithArgumentSelectedItem).isNull();
 		spinner.performItemClick(view, TESTED_CLICKED_INDEX, itemId);
 		assertThat(activity.spinnerWithArgumentSelectedItem).isNotNull();
-		assertThat(activity.spinnerWithArgumentSelectedItem).isEqualTo(clickedItem);
+		assertThat(activity.spinnerWithArgumentSelectedItem).isEqualTo(
+				clickedItem);
 	}
 
 	@Test
 	public void handlingListViewitemClickWithArgument() {
-		ListView listView = (ListView) activity.findViewById(R.id.listViewWithArgument);
+		ListView listView = (ListView) activity
+				.findViewById(R.id.listViewWithArgument);
 		long itemId = listView.getAdapter().getItemId(TESTED_CLICKED_INDEX);
 		View view = listView.getChildAt(TESTED_CLICKED_INDEX);
 
 		assertThat(activity.listViewWithArgumentSelectedItem).isNull();
 		listView.performItemClick(view, TESTED_CLICKED_INDEX, itemId);
 		assertThat(activity.listViewWithArgumentSelectedItem).isNotNull();
-		assertThat(activity.listViewWithArgumentSelectedItem).isEqualTo(clickedItem);
+		assertThat(activity.listViewWithArgumentSelectedItem).isEqualTo(
+				clickedItem);
 	}
 
 	@Test
 	public void handlingListViewItemClickWithPosition() {
-		ListView listView = (ListView) activity.findViewById(R.id.listViewWithPosition);
+		ListView listView = (ListView) activity
+				.findViewById(R.id.listViewWithPosition);
 		long itemId = listView.getAdapter().getItemId(TESTED_CLICKED_INDEX);
 		View view = listView.getChildAt(TESTED_CLICKED_INDEX);
 
 		assertThat(activity.listViewWithPositionClickedPosition).isEqualTo(0);
 		listView.performItemClick(view, TESTED_CLICKED_INDEX, itemId);
-		assertThat(activity.listViewWithPositionClickedPosition).isEqualTo(TESTED_CLICKED_INDEX);
+		assertThat(activity.listViewWithPositionClickedPosition).isEqualTo(
+				TESTED_CLICKED_INDEX);
 	}
 
 	@Test
 	public void handlingListViewWithPositionItemSelected() {
-		ListView listView = (ListView) activity.findViewById(R.id.listViewWithPosition);
+		ListView listView = (ListView) activity
+				.findViewById(R.id.listViewWithPosition);
 
-		assertThat(activity.listViewWithPositionItemSelectedPosition).isEqualTo(0);
+		assertThat(activity.listViewWithPositionItemSelectedPosition)
+				.isEqualTo(0);
 		assertThat(activity.listViewWithPositionItemSelected).isFalse();
 		listView.setSelection(TESTED_CLICKED_INDEX);
 		assertThat(activity.listViewWithPositionItemSelected).isTrue();
-		assertThat(activity.listViewWithPositionItemSelectedPosition).isEqualTo(TESTED_CLICKED_INDEX);
+		assertThat(activity.listViewWithPositionItemSelectedPosition)
+				.isEqualTo(TESTED_CLICKED_INDEX);
 	}
-	
+
 	@Test
 	public void can_have_one_selected_argument() {
-		ListView listView = (ListView) activity.findViewById(R.id.listViewWithOneParam);
+		ListView listView = (ListView) activity
+				.findViewById(R.id.listViewWithOneParam);
 		assertThat(activity.listViewWithOneParamItemSelected).isFalse();
 		listView.setSelection(TESTED_CLICKED_INDEX);
 		assertThat(activity.listViewWithOneParamItemSelected).isTrue();
+	}
+
+	@Test
+	public void handlingListViewItemClickWithParametrizedItem() {
+		ListView listView = (ListView) activity.findViewById(R.id.listViewWithArgumentWithParameterType);
+		long itemId = listView.getAdapter().getItemId(TESTED_CLICKED_INDEX);
+		View view = listView.getChildAt(TESTED_CLICKED_INDEX);
+
+		assertThat(activity.listViewParametrizedItemClicked).isFalse();
+		listView.performItemClick(view, TESTED_CLICKED_INDEX, itemId);
+		assertThat(activity.listViewParametrizedItemClicked).isTrue();
 	}
 
 }
