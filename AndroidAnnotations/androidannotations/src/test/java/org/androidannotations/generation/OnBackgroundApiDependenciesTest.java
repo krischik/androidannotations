@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,7 +18,6 @@ package org.androidannotations.generation;
 import java.io.IOException;
 
 import org.androidannotations.AndroidAnnotationProcessor;
-import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.utils.AAProcessorTestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,14 +34,12 @@ public class OnBackgroundApiDependenciesTest extends AAProcessorTestHelper {
 	@Test
 	public void activity_with_background_annotated_method_generate_api_dependency() throws IOException {
 		CompileResult result = compileFiles(ActivityWithBackgroundMethod.class);
-		assertClassSourcesGeneratedToOutput(BackgroundExecutor.class);
 		assertCompilationSuccessful(result);
 	}
 
 	@Test
 	public void activity_without_background_annotated_method_generate_api_dependency() throws IOException {
 		CompileResult result = compileFiles(ActivityWithOnBackPressedMethod.class);
-		assertClassSourcesNotGeneratedToOutput(BackgroundExecutor.class);
 		assertCompilationSuccessful(result);
 	}
 

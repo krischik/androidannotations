@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,29 +15,35 @@
  */
 package org.androidannotations.annotations;
 
+import android.content.Intent;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import android.content.Intent;
-
 /**
+ * <p>
  * This annotation is intended to be used on methods to receive results from a
  * previously started activity using
  * {@link android.app.Activity#startActivityForResult(Intent, int)} or the
  * generated <code>IntentBuilder.startActivityForResult()</code> method of the
  * activity.
- * <p/>
+ * </p>
+ * <p>
  * The annotation value must be an integer constant that represents the
  * <b>requestCode</b> associated with the given result.
- * <p/>
+ * </p>
+ * <p>
  * The method may have multiple parameter :
+ * </p>
  * <ul>
- * <li>A {@link android.content.Intent} that contains data
- * <li>An <code>int</code> or an {@link java.lang.Integer} to get the resultCode
+ * <li>A {@link android.content.Intent} that contains data</li>
+ * <li>An <code>int</code> or an {@link java.lang.Integer} to get the resultCode</li>
+ * <li>Any native, {@link android.os.Parcelable} or {@link java.io.Serializable} parameter
+ * annotated with {@link org.androidannotations.annotations.OnActivityResult.Extra} to get an object put in the extras of the intent.</li>
  * </ul>
- * <p/>
+ *
  * <blockquote>
  * 
  * Some usage examples of &#064;OnActivityResult annotation:
@@ -56,7 +62,7 @@ import android.content.Intent;
  * }
  * 
  * &#064;OnActivityResult(<b>ANOTHER_REQUEST_CODE</b>)
- * void onResult() {
+ * void onResult(&#064;OnActivityResult.Extra anExtra) {
  * }
  * </pre>
  * 
@@ -72,5 +78,45 @@ import android.content.Intent;
 public @interface OnActivityResult {
 
 	int value();
+
+	/**
+	 * <p>
+	 * Use on any native, {@link android.os.Parcelable} or {@link java.io.Serializable} parameter of an
+	 * {@link OnActivityResult} annotated method to bind it with the value from the Intent.
+	 * </p>
+	 * <p>
+	 * The annotation value is the key used for the result data. If not set, the field name
+	 * will be used as the key.
+	 * </p>
+	 *
+	 * <blockquote>
+	 *
+	 * Some usage examples of &#064;Result annotation:
+	 *
+	 * <pre>
+	 * &#064;OnActivityResult(REQUEST_CODE)
+	 * void onResult(int resultCode, Intent data, <b>@Extra String value</b>) {
+	 * }
+	 *
+	 * &#064;OnActivityResult(REQUEST_CODE)
+	 * void onResult(int resultCode, <b>@Extra(value = "key") String value</b>) {
+	 * }
+	 *
+	 * &#064;OnActivityResult(REQUEST_CODE)
+	 * void onResult(<b>@Extra String strVal</b>, <b>@Extra int intVal</b>) {
+	 * }
+	 * </pre>
+	 *
+	 * </blockquote>
+	 *
+	 * @see android.app.Activity#onActivityResult(int, int, Intent)
+	 * @see OnActivityResult
+	 */
+
+	@Retention(RetentionPolicy.CLASS)
+	@Target(ElementType.PARAMETER)
+	public @interface Extra {
+		String value() default "";
+	}
 
 }

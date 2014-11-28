@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,12 +15,6 @@
  */
 package org.androidannotations.holder;
 
-import static com.sun.codemodel.JExpr._super;
-
-import java.util.HashMap;
-
-import org.androidannotations.process.ProcessHolder;
-
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JCase;
 import com.sun.codemodel.JCodeModel;
@@ -29,10 +23,16 @@ import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JSwitch;
 import com.sun.codemodel.JVar;
+import org.androidannotations.process.ProcessHolder;
+
+import java.util.HashMap;
+
+import static com.sun.codemodel.JExpr._super;
 
 public class OnActivityResultHolder {
 
 	private EComponentHolder holder;
+	private JMethod method;
 	private JBlock afterSuperBlock;
 	private JSwitch zwitch;
 	private JVar requestCodeParam;
@@ -42,6 +42,13 @@ public class OnActivityResultHolder {
 
 	public OnActivityResultHolder(EComponentHolder holder) {
 		this.holder = holder;
+	}
+
+	public JMethod getMethod() {
+		if (method == null) {
+			setOnActivityResult();
+		}
+		return method;
 	}
 
 	public JVar getRequestCodeParam() {
@@ -100,7 +107,7 @@ public class OnActivityResultHolder {
 	}
 
 	private void setOnActivityResult() {
-		JMethod method = holder.getGeneratedClass().method(JMod.PUBLIC, codeModel().VOID, "onActivityResult");
+		method = holder.getGeneratedClass().method(JMod.PUBLIC, codeModel().VOID, "onActivityResult");
 		method.annotate(Override.class);
 		requestCodeParam = method.param(codeModel().INT, "requestCode");
 		resultCodeParam = method.param(codeModel().INT, "resultCode");

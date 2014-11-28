@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,13 +15,6 @@
  */
 package org.androidannotations;
 
-import static org.androidannotations.helper.AndroidManifestFinder.ANDROID_MANIFEST_FILE_OPTION;
-import static org.androidannotations.helper.ModelConstants.TRACE_OPTION;
-import static org.androidannotations.logger.LoggerContext.LOG_APPENDER_CONSOLE;
-import static org.androidannotations.logger.LoggerContext.LOG_FILE_OPTION;
-import static org.androidannotations.logger.LoggerContext.LOG_LEVEL_OPTION;
-import static org.androidannotations.rclass.ProjectRClassFinder.RESOURCE_PACKAGE_NAME_OPTION;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +25,6 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -47,6 +39,7 @@ import org.androidannotations.helper.AndroidManifest;
 import org.androidannotations.helper.AndroidManifestFinder;
 import org.androidannotations.helper.ErrorHelper;
 import org.androidannotations.helper.Option;
+import org.androidannotations.helper.OptionsHelper;
 import org.androidannotations.logger.Level;
 import org.androidannotations.logger.Logger;
 import org.androidannotations.logger.LoggerContext;
@@ -63,8 +56,6 @@ import org.androidannotations.rclass.CoumpoundRClass;
 import org.androidannotations.rclass.IRClass;
 import org.androidannotations.rclass.ProjectRClassFinder;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
-@SupportedOptions({ TRACE_OPTION, ANDROID_MANIFEST_FILE_OPTION, RESOURCE_PACKAGE_NAME_OPTION, LOG_FILE_OPTION, LOG_LEVEL_OPTION, LOG_APPENDER_CONSOLE })
 public class AndroidAnnotationProcessor extends AbstractProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AndroidAnnotationProcessor.class);
@@ -72,8 +63,8 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 	private final Properties properties = new Properties();
 	private final Properties propertiesApi = new Properties();
 	private final TimeStats timeStats = new TimeStats();
-	private AnnotationHandlers annotationHandlers;
 	private final ErrorHelper errorHelper = new ErrorHelper();
+	private AnnotationHandlers annotationHandlers;
 
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -83,14 +74,14 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 		LoggerContext loggerContext = LoggerContext.getInstance();
 		loggerContext.setProcessingEnv(processingEnv);
 
-		LOGGER.info("Initialize AndroidAnnotationProcessor with options {}", processingEnv.getOptions());
-
 		try {
 			loadPropertyFile();
 			loadApiPropertyFile();
 		} catch (Exception e) {
 			LOGGER.error("Can't load API or core properties files", e);
 		}
+
+		LOGGER.info("Initialize AndroidAnnotations {} with options {}", getAAProcessorVersion(), processingEnv.getOptions());
 
 		annotationHandlers = new AnnotationHandlers(processingEnv);
 	}
@@ -100,8 +91,8 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 		String coreVersion = getAAProcessorVersion();
 
 		if (!apiVersion.equals(coreVersion)) {
-			LOGGER.error("AndroidAnnotation version for API ({}) and core ({}) doesn't match. Please check your classpath", apiVersion, coreVersion);
-			throw new VersionMismatchException("AndroidAnnotation version for API (" + apiVersion + ") and core (" + coreVersion + ") doesn't match. Please check your classpath");
+			LOGGER.error("AndroidAnnotations version for API ({}) and core ({}) doesn't match. Please check your classpath", apiVersion, coreVersion);
+			throw new VersionMismatchException("AndroidAnnotations version for API (" + apiVersion + ") and core (" + coreVersion + ") doesn't match. Please check your classpath");
 		}
 	}
 
@@ -140,7 +131,7 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 			URL url = getClass().getClassLoader().getResource(filename);
 			properties.load(url.openStream());
 		} catch (Exception e) {
-			LOGGER.error("Core property file {} couldn't be parse");
+			LOGGER.error("Core property file {} couldn't be parsed");
 			throw new FileNotFoundException("Core property file " + filename + " couldn't be parsed.");
 		}
 	}
@@ -151,7 +142,7 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 			URL url = EActivity.class.getClassLoader().getResource(filename);
 			propertiesApi.load(url.openStream());
 		} catch (Exception e) {
-			LOGGER.error("API property file {} couldn't be parse");
+			LOGGER.error("API property file {} couldn't be parsed");
 			throw new FileNotFoundException("API property file " + filename + " couldn't be parsed. Please check your classpath and verify that AA-API's version is at least 3.0");
 		}
 	}
@@ -274,9 +265,9 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 		Iterator<? extends TypeElement> iterator = annotations.iterator();
 		if (iterator.hasNext()) {
 			Element element = roundEnv.getElementsAnnotatedWith(iterator.next()).iterator().next();
-			LOGGER.error("Something went wront : {}", errorMessage, element);
+			LOGGER.error("Something went wrong: {}", element, errorMessage);
 		} else {
-			LOGGER.error("Something went wront : {}", errorMessage);
+			LOGGER.error("Something went wrong: {}", errorMessage);
 		}
 	}
 
@@ -284,4 +275,15 @@ public class AndroidAnnotationProcessor extends AbstractProcessor {
 	public Set<String> getSupportedAnnotationTypes() {
 		return annotationHandlers.getSupportedAnnotationTypes();
 	}
+
+	@Override
+	public Set<String> getSupportedOptions() {
+		return OptionsHelper.getOptionsConstants();
+	}
+
+	@Override
+	public SourceVersion getSupportedSourceVersion() {
+		return SourceVersion.latest();
+	}
+
 }

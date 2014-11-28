@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,7 +19,6 @@ import static com.sun.codemodel.JMod.PUBLIC;
 
 import javax.lang.model.element.TypeElement;
 
-import org.androidannotations.helper.APTCodeModelHelper;
 import org.androidannotations.helper.AndroidManifest;
 import org.androidannotations.process.ProcessHolder;
 
@@ -30,8 +29,6 @@ import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JVar;
 
 public class EIntentServiceHolder extends EServiceHolder {
-
-    private APTCodeModelHelper codeModelHelper = new APTCodeModelHelper();
 
     private JVar onHandleIntentIntent;
     private JMethod onHandleIntentMethod;

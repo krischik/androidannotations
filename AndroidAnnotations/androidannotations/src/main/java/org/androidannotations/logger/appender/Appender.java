@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,14 +19,27 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 
+import org.androidannotations.helper.OptionsHelper;
 import org.androidannotations.logger.Level;
+import org.androidannotations.logger.formatter.Formatter;
 
 public abstract class Appender {
 
+	protected final Formatter formatter;
 	protected ProcessingEnvironment processingEnv;
+	protected OptionsHelper optionsHelper;
+
+	public Appender(Formatter formatter) {
+		this.formatter = formatter;
+	}
+
+	public Formatter getFormatter() {
+		return formatter;
+	}
 
 	public void setProcessingEnv(ProcessingEnvironment processingEnv) {
 		this.processingEnv = processingEnv;
+		optionsHelper = new OptionsHelper(processingEnv);
 	}
 
 	public abstract void open();

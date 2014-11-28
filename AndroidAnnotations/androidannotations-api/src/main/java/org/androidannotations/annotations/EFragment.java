@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2013 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,33 +21,46 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Should be used on {@link android.app.Fragment} or
- * {@link android.support.v4.app.Fragment} classes to enable usage of
+ * <p>
+ * Should be used on android.app.Fragment or link
+ * android.support.v4.app.Fragment classes to enable usage of
  * AndroidAnnotations.
- * <p/>
+ * </p>
+ * <p>
  * Your code related to injected beans should go in an {@link AfterInject}
  * annotated method.
- * <p/>
+ * </p>
+ * <p>
  * Any view related code should happen in an {@link AfterViews} annotated
  * method.
- * <p/>
+ * </p>
+ * <p>
  * If the class is abstract, the enhanced activity will not be generated.
  * Otherwise, it will be generated as a final class. You can use
  * AndroidAnnotations to create Abstract classes that handle common code.
- * <p/>
+ * </p>
+ * <p>
  * The annotation value should be one of R.layout.* fields. If not set, no
  * content view will be set, and you should call the
  * <code>inflater.inflate()</code> method yourself, in
  * <code>onCreateView()</code>.
- * <p/>
+ * </p>
+ * <p>
+ * We only set the layout if the <code>onCreateView()</code> method returns null
+ * from the annotated class. If you want to set the layout regardless of that
+ * return value, use the {@link #forceLayoutInjection()} annotation parameter.
+ * </p>
+ * <p>
  * The generated class will also contain a FragmentBuilder to build fragment
  * with a fluent API. Arguments can be passed by using {@link FragmentArg}
  * annotation on every native or serializable/parcelable field.
- * <p/>
+ * </p>
+ * <p>
  * The enhanced fragment can also be retrieved (not injected in layout) in any
  * enhanced class by using {@link FragmentById} or {@link FragmentByTag}
  * annotations.
- * <p/>
+ * </p>
+ *
  * <blockquote>
  * 
  * Example :
@@ -98,4 +111,13 @@ public @interface EFragment {
 	int value() default ResId.DEFAULT_VALUE;
 
 	String resName() default "";
+
+	/**
+	 * We only set the layout if the <code>onCreateView()</code> method returns
+	 * null from the annotated class. If you want to set the layout regardless
+	 * of that return value, pass <b>true</b> to this annotation parameter.
+	 * 
+	 * @return <b>true</b>, if the layout must be set, <b>false</b> otherwise
+	 */
+	boolean forceLayoutInjection() default false;
 }

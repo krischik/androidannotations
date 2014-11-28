@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.androidannotations</groupId>
         <artifactId>androidannotations-parent</artifactId>
-        <version>3.0</version>
+        <version>3.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>androidannotations</artifactId>
@@ -32,14 +32,13 @@
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
-            <version>1.6_r2</version>
+            <version>4.1.1.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- spring-android-rest-template is required to use the Rest API -->
             <groupId>org.springframework.android</groupId>
             <artifactId>spring-android-rest-template</artifactId>
-            <version>1.0.0.RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
