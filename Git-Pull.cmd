@@ -21,8 +21,8 @@ GOTO :eof
 ::!#
  
 import scala.sys.process._
-("git" :: "fetch" :: "--tags" :: "https://github.com/excilys/androidannotations.git"	:: Nil).!
-("git" :: "pull" ::		 "https://github.com/excilys/androidannotations.git"	:: Nil).!
+("git" :: "fetch" :: "--tags" :: "https://github.com/excilys/androidannotations.git" :: Nil).!
+("git" :: "pull" ::		 "https://github.com/excilys/androidannotations.git" :: "androidannotations-3.0.1" :: Nil).!
 ("git" :: "pull" :: "origin" :: "3.0.1" :: Nil).!
 
 // vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :

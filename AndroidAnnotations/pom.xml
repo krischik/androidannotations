@@ -260,6 +260,7 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.9</version>
 					<configuration>
+                                                <failOnError>false</failOnError>
 						<locale>en_US</locale>
 					</configuration>
 					<executions>
