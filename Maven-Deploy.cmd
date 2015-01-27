@@ -11,11 +11,12 @@
 @ECHO OFF
 
 SETLOCAL
-    SET PATH=%PATH%;C:\opt\Git\bin
-    SET PATH=%PATH%;C:\opt\Scala\2.10.0\bin
+    SET PATH=%PATH%;C:\opt\Git\1.9.4\bin
+    SET PATH=%PATH%;C:\opt\Scala\2.11.4\bin
+    SET CALCULATOR_VERSION=6.7.0
 
     PUSHD AndroidAnnotations
-        SET Scala_Library="${WORK}/Repositories/Local/net/sourceforge/uiq3/Calculator-Script/${CALCULATOR_VERSION}/Calculator-Script-${CALCULATOR_VERSION}.jar"
+        SET Scala_Library="%[WORK]/Repositories/Local/net/sourceforge/uiq3/Calculator-Script/%[CALCULATOR_VERSION]/Calculator-Script-%[CALCULATOR_VERSION].jar"
 
 	CALL scala -classpath %Scala_Library% -save %~f0 %*
     POPD

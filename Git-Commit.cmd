@@ -11,8 +11,8 @@
 @ECHO OFF
 
 SETLOCAL
-    SET PATH=%PATH%;C:\opt\Git\bin
-    SET PATH=%PATH%;C:\opt\Scala\2.10.0\bin
+    SET PATH=%PATH%;C:\opt\Git\1.9.4\bin
+    SET PATH=%PATH%;C:\opt\Scala\2.11.4\bin
 
     CALL scala -language:postfixOps -save %~f0 %*    
 ENDLOCAL
@@ -23,7 +23,7 @@ GOTO :eof
 import scala.sys.process._
 
 ("git" :: "add"  :: "." :: Nil).!
-("git" :: "commit" :: "--message" :: argv (0) :: Nil).!
+("git" :: "commit" :: "--message" :: args (0) :: Nil).!
 ("git" :: "push" :: "-u" :: "origin" :: "3.0" :: Nil).!
 
 // vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
