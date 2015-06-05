@@ -138,7 +138,11 @@
 				<version>3.9.0-rc.3</version>
 				<configuration>
 					<sdk>
+<<<<<<< HEAD
 						<platform>16</platform>
+=======
+						<platform>17</platform>
+>>>>>>> 695ed9951b0386168db8642a214952215ff325c7
 					</sdk>
 					<dex>
 						<jvmArguments>

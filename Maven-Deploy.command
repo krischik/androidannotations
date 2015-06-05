@@ -43,6 +43,8 @@ pushd "/Work/HomePage/uiq3/htdocs"
 	--keep-dirlinks					\
 	"Repository"					\
 	"krischik,uiq3@web.sourceforge.net:htdocs"
+
+    sshpass -p ${KEY_SF} ssh ${Download_Server} shutdown
 popd
 # vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :
