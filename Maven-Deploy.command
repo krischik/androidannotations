@@ -23,7 +23,9 @@
 #  $HeadURL: https://uiq3.svn.sourceforge.net/svnroot/uiq3/trunk/Java/Utilities/Start-Vim.command $
 ########################################################### }}}1 ###########
 
-local Download_Server="krischik,uiq3@shell.sourceforge.net";
+setopt Err_Exit
+
+local Download_Server="krischik,uiq3@shell.sourceforge.net"
 local Scala_Library="${WORK}/Repositories/Local/net/sourceforge/uiq3/Calculator-Script/6.2.0/Calculator-Script-6.2.0.jar"
 
 ssh-add					\
@@ -46,5 +48,6 @@ pushd "/Work/HomePage/uiq3/htdocs"
 
     sshpass -p ${KEY_SF} ssh ${Download_Server} shutdown
 popd
+
 # vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

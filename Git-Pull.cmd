@@ -22,8 +22,8 @@ GOTO :eof
 
 import scala.sys.process._
 
-("git" :: "pull" :: "https://github.com/excilys/androidannotations.git"		  :: Nil).!
-("git" :: "pull" :: "origin" :: "3.2" :: Nil).!
+("git" :: "pull" :: "https://github.com/excilys/androidannotations.git" :: "tags/androidannotations-3.3.1" :: Nil).!
+("git" :: "pull" :: "origin" :: "3.3.1" :: Nil).!
 
 // vim: set wrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 // vim: set textwidth=0 filetype=scala foldmethod=marker nospell :

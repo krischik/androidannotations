@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -92,6 +92,7 @@ public class AnnotationHandlers {
 		add(new HeadHandler(processingEnvironment));
 		add(new OptionsHandler(processingEnvironment));
 		add(new AppHandler(processingEnvironment));
+		add(new BeanHandler(processingEnvironment));
 		add(new OptionsMenuHandler(processingEnvironment));
 		add(new OptionsMenuItemHandler(processingEnvironment));
 		add(new OptionsItemHandler(processingEnvironment));
@@ -100,9 +101,8 @@ public class AnnotationHandlers {
 		add(new FullscreenHandler(processingEnvironment));
 		add(new RestServiceHandler(processingEnvironment));
 		add(new OrmLiteDaoHandler(processingEnvironment));
-		add(new RootContextHanlder(processingEnvironment));
+		add(new RootContextHandler(processingEnvironment));
 		add(new NonConfigurationInstanceHandler(processingEnvironment));
-		add(new BeanHandler(processingEnvironment));
 		add(new ExtraHandler(processingEnvironment));
 		add(new BeforeTextChangeHandler(processingEnvironment));
 		add(new TextChangeHandler(processingEnvironment));
@@ -126,6 +126,16 @@ public class AnnotationHandlers {
 		add(new AfterInjectHandler(processingEnvironment));
 		add(new AfterExtrasHandler(processingEnvironment));
 		add(new AfterViewsHandler(processingEnvironment));
+
+		/* preference screen handler must be after injections */
+		add(new PreferenceScreenHandler(processingEnvironment));
+		add(new PreferenceHeadersHandler(processingEnvironment));
+		/* Preference injections must be after preference screen handler */
+		add(new PreferenceByKeyHandler(processingEnvironment));
+		add(new PreferenceChangeHandler(processingEnvironment));
+		add(new PreferenceClickHandler(processingEnvironment));
+		/* After preference injection methods must be after preference injections */
+		add(new AfterPreferencesHandler(processingEnvironment));
 
 		if (optionsHelper.shouldLogTrace()) {
 			add(new TraceHandler(processingEnvironment));

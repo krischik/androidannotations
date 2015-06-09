@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -41,7 +41,7 @@ import com.sun.codemodel.JVar;
 
 public abstract class EComponentHolder extends BaseGeneratedClassHolder {
 
-    private static final String METHOD_MAIN_LOOPER = "getMainLooper";
+	private static final String METHOD_MAIN_LOOPER = "getMainLooper";
 
 	protected JExpression contextRef;
 	protected JMethod init;
@@ -133,8 +133,8 @@ public abstract class EComponentHolder extends BaseGeneratedClassHolder {
 
 	private void setHandler() {
 		JClass handlerClass = classes().HANDLER;
-        JClass looperClass = classes().LOOPER;
-        JInvocation arg = JExpr._new(handlerClass).arg(looperClass.staticInvoke(METHOD_MAIN_LOOPER));
-        handler = generatedClass.field(JMod.PRIVATE, handlerClass, "handler_", arg);
+		JClass looperClass = classes().LOOPER;
+		JInvocation arg = JExpr._new(handlerClass).arg(looperClass.staticInvoke(METHOD_MAIN_LOOPER));
+		handler = generatedClass.field(JMod.PRIVATE, handlerClass, "handler_", arg);
 	}
 }

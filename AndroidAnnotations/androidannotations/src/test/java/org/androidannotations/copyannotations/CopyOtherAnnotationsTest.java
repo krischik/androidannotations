@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,32 +23,35 @@ import org.junit.Test;
 public class CopyOtherAnnotationsTest extends AAProcessorTestHelper {
 
 	@Before
-	public void setup() {
+	public void setUp() {
 		addManifestProcessorParameter(CopyOtherAnnotationsTest.class);
 		addProcessor(AndroidAnnotationProcessor.class);
 	}
 
 	@Test
-	public void testGeneretedClassWithCopiedAnnotationsCompiles() {
+	public void testGeneratedClassWithCopiedAnnotationsCompiles() {
 		assertCompilationSuccessful(compileFiles(HasOtherAnnotations.class));
 	}
 
 	@Test
 	public void testGeneratedClassHasCopiedNonAAAnnotations() {
+		// CHECKSTYLE:OFF
 		String[] classHeader = { //
 				"@XmlType", //
 				"@TestTargetClass(String.class)", //
 				"@WebServiceRefs({", //
 				"    @WebServiceRef(type = String.class)", //
 				"})", //
-				"public final class HasOtherAnnotations_" };
-
+				"public final class HasOtherAnnotations_", };
+		
+		// CHECKSTYLE:ON
 		compileFiles(HasOtherAnnotations.class);
 		assertGeneratedClassContains(toGeneratedFile(HasOtherAnnotations.class), classHeader);
 	}
 
 	@Test
 	public void testOverridenMethodHasCopiedNonAAAnnotations() {
+		// CHECKSTYLE:OFF
 		String[] methodSignature = { //
 				"    @Addressing(responses = (javax.xml.ws.soap.AddressingFeature.Responses.ALL))", //
 				"    @Action(input = \"someString\")", //
@@ -57,8 +60,9 @@ public class CopyOtherAnnotationsTest extends AAProcessorTestHelper {
 				"        \"hi\"", //
 				"    })", //
 				"    @Override", //
-				"    public void onEvent(final Event event) {" };
-
+				"    public void onEvent(final Event event) {", };
+		// CHECKSTYLE:ON
+		
 		compileFiles(HasOtherAnnotations.class);
 		assertGeneratedClassContains(toGeneratedFile(HasOtherAnnotations.class), methodSignature);
 	}
@@ -67,12 +71,23 @@ public class CopyOtherAnnotationsTest extends AAProcessorTestHelper {
 	public void testOverrideDoesNotAddedTwice() {
 		addProcessorParameter("trace", "true");
 		compileFiles(HasOtherAnnotations.class);
-
+		
+		// CHECKSTYLE:OFF
 		String[] methodSignature = { //
 				"    @java.lang.Override", //
 				"    @java.lang.Override", //
-				"    public String toString() {" };
-
+				"    public String toString() {", };
+		// CHECKSTYLE:ON
+		
 		assertGeneratedClassDoesNotContain(toGeneratedFile(HasOtherAnnotations.class), methodSignature);
+	}
+
+	@Test
+	public void testInheritedAnnotationsNotCopied() {
+		compileFiles(HasOtherAnnotations.class);
+
+		String[] annotation = { "@RunWith(Runner.class)", };
+
+		assertGeneratedClassDoesNotContain(toGeneratedFile(HasOtherAnnotations.class), annotation);
 	}
 }

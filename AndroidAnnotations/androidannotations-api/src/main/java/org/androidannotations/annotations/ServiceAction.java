@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -96,8 +96,8 @@ public @interface ServiceAction {
 	/**
 	 * Define the action's name. If this field isn't set the annotated method
 	 * name will be used.
-	 *
-	 * @return the action's name
+	 * 
+	 * @return the name of the action
 	 */
 	String value() default "";
 

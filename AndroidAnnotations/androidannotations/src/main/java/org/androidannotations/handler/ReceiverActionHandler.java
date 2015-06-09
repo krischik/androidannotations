@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -132,7 +132,8 @@ public class ReceiverActionHandler extends BaseAnnotationHandler<EReceiverHolder
 				callActionInvocation.arg(intent);
 			} else if (param.getAnnotation(ReceiverAction.Extra.class) != null) {
 				if (extras == null) {
-					extras = callActionBlock.decl(classes().BUNDLE, "extras_", JOp.cond(intent.invoke("getExtras").ne(_null()), intent.invoke("getExtras"), _new(classes().BUNDLE)));
+					extras = callActionBlock.decl(classes().BUNDLE, "extras_", JOp.cond(intent.invoke("getExtras") //
+							.ne(_null()), intent.invoke("getExtras"), _new(classes().BUNDLE)));
 				}
 				callActionInvocation.arg(extraHandler.getExtraValue(param, extras, callActionBlock, holder));
 			}

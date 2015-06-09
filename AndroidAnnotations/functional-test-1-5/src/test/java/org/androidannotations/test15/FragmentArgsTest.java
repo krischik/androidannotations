@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,13 +17,14 @@ package org.androidannotations.test15;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-import org.androidannotations.test15.instancestate.SaveInstanceStateActivityParameterizedTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import android.os.Bundle;
 
+@Config(shadows = CustomShadowBundle.class)
 @RunWith(RobolectricTestRunner.class)
 public class FragmentArgsTest {
 
@@ -33,8 +34,8 @@ public class FragmentArgsTest {
 	 * This test verifies the Fragment argument gets injected. It does not check
 	 * for different types, because we use the same code for every
 	 * Bundle-related operation and types are already tested in
-	 * {@link SaveInstanceStateActivityParameterizedTest}.
-	 *
+	 * {@link org.androidannotations.test15.instancestate.SaveInstanceStateActivityParameterizedTest
+	 * SaveInstanceStateActivityParameterizedTest} .
 	 */
 	@Test
 	public void testFragmentArgInjected() {

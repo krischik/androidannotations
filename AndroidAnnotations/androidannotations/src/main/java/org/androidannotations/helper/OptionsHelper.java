@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2014 eBusiness Information, Excilys Group
+ * Copyright (C) 2010-2015 eBusiness Information, Excilys Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,7 +32,8 @@ public class OptionsHelper {
 		RESOURCE_PACKAGE_NAME("resourcePackageName", null), //
 		LOG_FILE("logFile", null), //
 		LOG_LEVEL("logLevel", "DEBUG"), //
-		LOG_APPENDER_CONSOLE("logAppenderConsole", "false");
+		LOG_APPENDER_CONSOLE("logAppenderConsole", "false"), //
+		LOG_APPENDER_FILE("logAppenderFile", "true");
 
 		private String key;
 		private String defaultValue;
@@ -58,7 +59,7 @@ public class OptionsHelper {
 	}
 
 	public static Set<String> getOptionsConstants() {
-		TreeSet<String> set = new TreeSet<String>();
+		Set<String> set = new TreeSet<String>();
 		for (Option optionEnum : Option.values()) {
 			set.add(optionEnum.getKey());
 		}
@@ -95,6 +96,10 @@ public class OptionsHelper {
 
 	public boolean shouldUseConsoleAppender() {
 		return getBoolean(Option.LOG_APPENDER_CONSOLE);
+	}
+
+	public boolean shouldUseFileAppender() {
+		return getBoolean(Option.LOG_APPENDER_FILE);
 	}
 
 	private String getString(Option option) {
