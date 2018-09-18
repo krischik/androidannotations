@@ -1,0 +1,56 @@
+buildscript {
+    ext.kotlin_version = "1.1.51"
+
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        // replace with the current version of the Android plugin
+        classpath "com.android.tools.build:gradle:3.0.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-allopen"
+apply plugin: "kotlin-kapt"
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 26
+    }
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+    }
+}
+
+allOpen {
+    annotation("org.androidannotations.api.KotlinOpen")
+}
+
+// If you have different applicationIds for buildTypes or productFlavors uncomment this block.
+//kapt {
+//    arguments {
+//        arg("resourcePackageName", "org.androidannotations.gradle")
+//    }
+//}
+
+def AAVersion = "4.5.0-SNAPSHOT" // change this to your desired version, for example the latest stable: 4.4.0
+
+dependencies {
+    kapt "org.androidannotations:androidannotations:$AAVersion"
+    implementation "org.androidannotations:androidannotations-api:$AAVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}

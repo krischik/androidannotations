@@ -5,6 +5,7 @@ Paging indicator widgets that are compatible with the `ViewPager` from the
 [Android Support Library][2] to improve discoverability of content.
 
 Try out the sample application [on the Android Market][10].
+[![Android Annotations Logo](https://github.com/androidannotations/androidannotations/wiki/img/aa-logo.png)](https://github.com/androidannotations/androidannotations/wiki/Home) 
 
 ![ViewPagerIndicator Sample Screenshots][9]
 
@@ -138,3 +139,7 @@ License
  [8]: http://developer.android.com/guide/developing/projects/projects-eclipse.html#ReferencingLibraryProject
  [9]: https://raw.github.com/JakeWharton/Android-ViewPagerIndicator/master/sample/screens.png
  [10]: https://play.google.com/store/apps/details?id=com.viewpagerindicator.sample
+### [**Documentation**](https://github.com/androidannotations/androidannotations/wiki/Home)
+
+[![Build Status](https://travis-ci.org/androidannotations/androidannotations.svg?branch=develop)](https://travis-ci.org/androidannotations/androidannotations/builds) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-AndroidAnnotations-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/128)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/androidannotations/androidannotations?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)

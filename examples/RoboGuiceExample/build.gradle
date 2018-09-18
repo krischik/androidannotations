@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        // replace with the current version of the Android plugin
+        classpath "com.android.tools.build:gradle:3.0.0"
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+apply plugin: "com.android.application"
+
+def AAVersion = "4.5.0-SNAPSHOT" // change this to your desired version, for example the latest stable: 4.4.0
+dependencies {
+    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
+    implementation "org.androidannotations:androidannotations-api:$AAVersion"
+    annotationProcessor "org.androidannotations:roboguice:$AAVersion"
+    implementation "org.androidannotations:roboguice-api:$AAVersion"
+    implementation "org.roboguice:roboguice:3.0.1"
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 26
+
+        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
+        //javaCompileOptions {
+        //    annotationProcessorOptions {
+        //        arguments = ['resourcePackageName': android.defaultConfig.applicationId]
+        //    }
+        //}
+    }
+
+    lintOptions {
+        abortOnError false
+        // see https://github.com/roboguice/roboguice/issues/295
+    }
+}
