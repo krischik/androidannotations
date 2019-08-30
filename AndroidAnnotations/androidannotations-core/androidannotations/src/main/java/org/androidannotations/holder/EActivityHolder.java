@@ -54,8 +54,8 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 
-public class EActivityHolder extends EComponentWithViewSupportHolder implements HasIntentBuilder, HasExtras, HasInstanceState, HasOptionsMenu, HasOnActivityResult, HasActivityLifecycleMethods,
-		HasReceiverRegistration, HasPreferenceHeaders {
+public class EActivityHolder extends EComponentWithViewSupportHolder
+		implements HasIntentBuilder, HasExtras, HasInstanceState, HasOptionsMenu, HasOnActivityResult, HasActivityLifecycleMethods, HasReceiverRegistration, HasPreferenceHeaders {
 
 	private ActivityIntentBuilder intentBuilder;
 	private JMethod onCreate;
@@ -334,7 +334,12 @@ public class EActivityHolder extends EComponentWithViewSupportHolder implements 
 
 	@Override
 	protected void setFindSupportFragmentById() {
-		JMethod method = generatedClass.method(PRIVATE, getClasses().SUPPORT_V4_FRAGMENT, "findSupportFragmentById");
+		JMethod method;
+		if (getProcessingEnvironment().getElementUtils().getTypeElement(CanonicalNameConstants.ANDROIDX_FRAGMENT) == null) {
+			method = getGeneratedClass().method(PRIVATE, getClasses().SUPPORT_V4_FRAGMENT, "findSupportFragmentById");
+		} else {
+			method = getGeneratedClass().method(PRIVATE, getClasses().ANDROIDX_FRAGMENT, "findSupportFragmentById");
+		}
 		JVar idParam = method.param(getCodeModel().INT, "id");
 		JBlock body = method.body();
 		body._return(invoke("getSupportFragmentManager").invoke("findFragmentById").arg(idParam));
@@ -352,7 +357,12 @@ public class EActivityHolder extends EComponentWithViewSupportHolder implements 
 
 	@Override
 	protected void setFindSupportFragmentByTag() {
-		JMethod method = generatedClass.method(PRIVATE, getClasses().SUPPORT_V4_FRAGMENT, "findSupportFragmentByTag");
+		JMethod method;
+		if (getProcessingEnvironment().getElementUtils().getTypeElement(CanonicalNameConstants.ANDROIDX_FRAGMENT) == null) {
+			method = getGeneratedClass().method(PRIVATE, getClasses().SUPPORT_V4_FRAGMENT, "findSupportFragmentByTag");
+		} else {
+			method = getGeneratedClass().method(PRIVATE, getClasses().ANDROIDX_FRAGMENT, "findSupportFragmentByTag");
+		}
 		JVar tagParam = method.param(getClasses().STRING, "tag");
 		JBlock body = method.body();
 		body._return(invoke("getSupportFragmentManager").invoke("findFragmentByTag").arg(tagParam));
@@ -583,7 +593,7 @@ public class EActivityHolder extends EComponentWithViewSupportHolder implements 
 
 	private void setGetLastNonConfigurationInstance() throws JClassAlreadyExistsException {
 		AnnotationHelper annotationHelper = new AnnotationHelper(getEnvironment());
-		TypeElement fragmentActivityTypeElement = annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.FRAGMENT_ACTIVITY);
+		TypeElement fragmentActivityTypeElement = getFragmentActivity(annotationHelper);
 		TypeElement typeElement = annotationHelper.typeElementFromQualifiedName(generatedClass._extends().fullName());
 		String getLastNonConfigurationInstanceName = "getLastNonConfigurationInstance";
 		if (fragmentActivityTypeElement != null && annotationHelper.isSubtype(typeElement.asType(), fragmentActivityTypeElement.asType())) {
@@ -618,7 +628,7 @@ public class EActivityHolder extends EComponentWithViewSupportHolder implements 
 
 	private void setOnRetainNonConfigurationInstance() throws JClassAlreadyExistsException {
 		AnnotationHelper annotationHelper = new AnnotationHelper(getEnvironment());
-		TypeElement fragmentActivityTypeElement = annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.FRAGMENT_ACTIVITY);
+		TypeElement fragmentActivityTypeElement = getFragmentActivity(annotationHelper);
 		TypeElement typeElement = annotationHelper.typeElementFromQualifiedName(generatedClass._extends().fullName());
 
 		String onRetainNonConfigurationInstanceName = "onRetainNonConfigurationInstance";
@@ -637,6 +647,14 @@ public class EActivityHolder extends EComponentWithViewSupportHolder implements 
 		methodBody.assign(onRetainNonConfigurationInstance.ref(ncHolder.getSuperNonConfigurationInstanceField()), superCall);
 		onRetainNonConfigurationInstanceBindBlock = methodBody.blockSimple();
 		methodBody._return(onRetainNonConfigurationInstance);
+	}
+
+	private TypeElement getFragmentActivity(AnnotationHelper annotationHelper) {
+		TypeElement supportFragmentActivity = annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.FRAGMENT_ACTIVITY);
+		if (supportFragmentActivity == null) {
+			return annotationHelper.typeElementFromQualifiedName(CanonicalNameConstants.ANDROIDX_FRAGMENT_ACTIVITY);
+		}
+		return supportFragmentActivity;
 	}
 
 	@Override
@@ -776,6 +794,12 @@ public class EActivityHolder extends EComponentWithViewSupportHolder implements 
 		return preferencesHolder.usingSupportV7Preference();
 	}
 
+	@Override
+	public boolean usingAndroidxPreference() {
+		return preferencesHolder.usingAndroidxPreference();
+	}
+
+	@Override
 	public AbstractJClass getBasePreferenceClass() {
 		return preferencesHolder.getBasePreferenceClass();
 	}

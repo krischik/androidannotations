@@ -65,7 +65,6 @@ public class ReceiverHandler extends CoreBaseAnnotationHandler<HasReceiverRegist
 		return Collections.<AnnotationHandler> singleton(extraHandler);
 	}
 
-
 	@Override
 	protected void validate(Element element, ElementValidation validation) {
 		validatorHelper.enclosingElementHasEActivityOrEFragmentOrEServiceOrEIntentServiceOrEViewOrEViewGroup(element, validation);
@@ -173,7 +172,11 @@ public class ReceiverHandler extends CoreBaseAnnotationHandler<HasReceiverRegist
 
 		IJExpression broadcastManager;
 		if (local) {
-			broadcastManager = getClasses().LOCAL_BROADCAST_MANAGER.staticInvoke("getInstance").arg(holder.getContextRef());
+			if (getProcessingEnvironment().getElementUtils().getTypeElement(CanonicalNameConstants.LOCAL_BROADCAST_MANAGER) == null) {
+				broadcastManager = getClasses().ANDROIDX_LOCAL_BROADCAST_MANAGER.staticInvoke("getInstance").arg(holder.getContextRef());
+			} else {
+				broadcastManager = getClasses().LOCAL_BROADCAST_MANAGER.staticInvoke("getInstance").arg(holder.getContextRef());
+			}
 		} else {
 			broadcastManager = holder.getContextRef();
 		}

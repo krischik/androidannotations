@@ -67,13 +67,13 @@ import org.androidannotations.internal.model.AnnotationElements;
 @SuppressWarnings("checkstyle:methodcount")
 public class ValidatorHelper {
 
-	private static final List<String> ANDROID_FRAGMENT_QUALIFIED_NAMES = asList(CanonicalNameConstants.FRAGMENT, CanonicalNameConstants.SUPPORT_V4_FRAGMENT);
+	private static final List<String> ANDROID_FRAGMENT_QUALIFIED_NAMES = asList(CanonicalNameConstants.FRAGMENT, CanonicalNameConstants.SUPPORT_V4_FRAGMENT, CanonicalNameConstants.ANDROIDX_FRAGMENT);
 
 	private static final Collection<Integer> VALID_LOG_LEVELS = asList(LOG_VERBOSE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR);
 
 	private static final List<String> VALID_PREFERENCE_CLASSES = asList(CanonicalNameConstants.PREFERENCE_ACTIVITY, CanonicalNameConstants.PREFERENCE_FRAGMENT,
 			CanonicalNameConstants.SUPPORT_V4_PREFERENCE_FRAGMENT, CanonicalNameConstants.MACHINARIUS_V4_PREFERENCE_FRAGMENT, CanonicalNameConstants.SUPPORT_V7_PREFERENCE_FRAGMENTCOMPAT,
-			CanonicalNameConstants.SUPPORT_V14_PREFERENCE_FRAGMENT);
+			CanonicalNameConstants.SUPPORT_V14_PREFERENCE_FRAGMENT, CanonicalNameConstants.ANDROIDX_PREFERENCE_FRAGMENT, CanonicalNameConstants.ANDROIDX_PREFERENCE_FRAGMENTCOMPAT);
 
 	protected final TargetAnnotationHelper annotationHelper;
 	private final ParcelerHelper parcelerHelper;
@@ -240,8 +240,7 @@ public class ValidatorHelper {
 		Set<String> supportedAnnotationTypes = environment().getSupportedAnnotationTypes();
 		for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
 			if (supportedAnnotationTypes.contains(annotationMirror.getAnnotationType().toString())) {
-				validation.addError(element,
-						"method injection does only allow the annotation to be placed on the method OR on each parameter.");
+				validation.addError(element, "method injection does only allow the annotation to be placed on the method OR on each parameter.");
 				break;
 			}
 		}
@@ -260,8 +259,8 @@ public class ValidatorHelper {
 		if (shouldFind != foundAnnotation) {
 			String not = shouldFind ? "" : " not";
 
-			validation.addError(reportElement, "%s can only be used in a " + element.getKind().toString().toLowerCase() + not + " annotated with "
-					+ getFormattedValidEnhancedBeanAnnotationTypes(validAnnotations) + ".");
+			validation.addError(reportElement,
+					"%s can only be used in a " + element.getKind().toString().toLowerCase() + not + " annotated with " + getFormattedValidEnhancedBeanAnnotationTypes(validAnnotations) + ".");
 		}
 	}
 
@@ -301,7 +300,6 @@ public class ValidatorHelper {
 		Set<? extends Element> layoutAnnotatedElements = validatedModel().getRootAnnotatedElements(annotation.getName());
 		return layoutAnnotatedElements.contains(element);
 	}
-
 
 	public void typeHasAnnotation(Class<? extends Annotation> annotation, Element element, ElementValidation valid) {
 		TypeMirror elementType = element.asType();
@@ -500,7 +498,7 @@ public class ValidatorHelper {
 	}
 
 	public void extendsPreference(Element element, ElementValidation validation) {
-		extendsOneOfTypes(element, asList(CanonicalNameConstants.PREFERENCE, CanonicalNameConstants.SUPPORT_V7_PREFERENCE), validation);
+		extendsOneOfTypes(element, asList(CanonicalNameConstants.PREFERENCE, CanonicalNameConstants.SUPPORT_V7_PREFERENCE, CanonicalNameConstants.ANDROIDX_PREFERENCE), validation);
 	}
 
 	public void extendsOneOfTypes(Element element, List<String> typeQualifiedNames, ElementValidation valid) {
@@ -688,8 +686,8 @@ public class ValidatorHelper {
 			String simpleName = typeElement.getSimpleName().toString();
 			String generatedSimpleName = simpleName + classSuffix();
 			if (componentQualifiedNames.contains(componentQualifiedName)) {
-				valid.addError("The AndroidManifest.xml file contains the original component, and not the AndroidAnnotations generated component. Please register "
-						+ generatedSimpleName + " instead of " + simpleName);
+				valid.addError("The AndroidManifest.xml file contains the original component, and not the AndroidAnnotations generated component. Please register " + generatedSimpleName
+						+ " instead of " + simpleName);
 			} else {
 				if (printWarning) {
 					valid.addWarning("The component " + generatedSimpleName + " is not registered in the AndroidManifest.xml file.");
@@ -735,8 +733,7 @@ public class ValidatorHelper {
 
 			String enclosedElementName = enclosedElement.getSimpleName().toString();
 			if (actionNames.contains(enclosedElementName)) {
-				valid.addError(enclosedElement, "The " + TargetAnnotationHelper.annotationName(annotation)
-						+ " annotated method must have unique name even if the signature is not the same");
+				valid.addError(enclosedElement, "The " + TargetAnnotationHelper.annotationName(annotation) + " annotated method must have unique name even if the signature is not the same");
 			} else {
 				actionNames.add(enclosedElementName);
 			}
@@ -766,8 +763,9 @@ public class ValidatorHelper {
 	}
 
 	public void isViewPagerClassPresent(ElementValidation validation) {
-		if (!isClassPresent(CanonicalNameConstants.VIEW_PAGER)) {
-			validation.addError("The class " + CanonicalNameConstants.VIEW_PAGER + " cannot be found. You have to include support v4 library");
+		if (!isClassPresent(CanonicalNameConstants.VIEW_PAGER) && !isClassPresent(CanonicalNameConstants.ANDROIDX_VIEW_PAGER)) {
+			validation.addError("The classes " + CanonicalNameConstants.VIEW_PAGER + " and " + CanonicalNameConstants.ANDROIDX_VIEW_PAGER
+					+ " cannot be found. You have to include support-v4 or androidx.viewpager library");
 		}
 	}
 }

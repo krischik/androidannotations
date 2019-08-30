@@ -44,8 +44,8 @@ public abstract class ModelConstants {
 
 	public static final List<Class<? extends Annotation>> VALID_ENHANCED_VIEW_SUPPORT_ANNOTATIONS = asList(EActivity.class, EViewGroup.class, EView.class, EBean.class, EFragment.class);
 
-	public static final List<Class<? extends Annotation>> VALID_ENHANCED_COMPONENT_ANNOTATIONS = asList(EApplication.class, EActivity.class, EViewGroup.class, EView.class, EBean.class,
-			EService.class, EIntentService.class, EReceiver.class, EProvider.class, EFragment.class);
+	public static final List<Class<? extends Annotation>> VALID_ENHANCED_COMPONENT_ANNOTATIONS = asList(EApplication.class, EActivity.class, EViewGroup.class, EView.class, EBean.class, EService.class,
+			EIntentService.class, EReceiver.class, EProvider.class, EFragment.class);
 
 	private ModelConstants() {
 	}
@@ -57,7 +57,7 @@ public abstract class ModelConstants {
 			throw new IllegalArgumentException("'" + classSuffix + "' may not be an empty string.");
 		}
 
-		if (!SourceVersion.isName(classSuffix) || classSuffix.contains(".")) {
+		if (!SourceVersion.isName("ValidName" + classSuffix) || classSuffix.contains(".")) {
 			throw new IllegalArgumentException("'" + classSuffix + "' may not be a valid Java identifier.");
 		}
 	}

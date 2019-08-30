@@ -51,8 +51,8 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 
-public class EFragmentHolder extends EComponentWithViewSupportHolder implements HasInstanceState, HasOptionsMenu, HasOnActivityResult, HasActivityLifecycleMethods,
-		HasReceiverRegistration, HasPreferences {
+public class EFragmentHolder extends EComponentWithViewSupportHolder
+		implements HasInstanceState, HasOptionsMenu, HasOnActivityResult, HasActivityLifecycleMethods, HasReceiverRegistration, HasPreferences {
 
 	private JFieldVar contentView;
 	private JFieldVar viewDestroyedField;
@@ -120,6 +120,7 @@ public class EFragmentHolder extends EComponentWithViewSupportHolder implements 
 		viewNotifierHelper.invokeViewChanged(onViewCreatedBody);
 	}
 
+	@Override
 	public IJExpression getFindViewByIdExpression(JVar idParam) {
 		JFieldVar contentView = getContentView();
 		JInvocation invocation = contentView.invoke("findViewById").arg(idParam);
@@ -597,6 +598,12 @@ public class EFragmentHolder extends EComponentWithViewSupportHolder implements 
 		return preferencesDelegate.usingSupportV7Preference();
 	}
 
+	@Override
+	public boolean usingAndroidxPreference() {
+		return preferencesDelegate.usingAndroidxPreference();
+	}
+
+	@Override
 	public AbstractJClass getBasePreferenceClass() {
 		return preferencesDelegate.getBasePreferenceClass();
 	}
