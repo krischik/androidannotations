@@ -123,18 +123,6 @@
 			<plugin>
 				<groupId>com.simpligility.maven.plugins</groupId>
 				<artifactId>android-maven-plugin</artifactId>
-				<version>3.6.0</version>
-				<configuration>
-					<sdk>
-						<platform>17</platform>
-					</sdk>
-					<dex>
-						<jvmArguments>
-							<jvmArgument>-Xmx512m</jvmArgument>
-						</jvmArguments>
-					</dex>
-				</configuration>
-				<extensions>true</extensions>
 			</plugin>
 
 			<plugin>

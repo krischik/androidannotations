@@ -23,7 +23,13 @@
 #  $HeadURL: https://uiq3.svn.sourceforge.net/svnroot/uiq3/trunk/Java/Utilities/Start-Vim.command $
 ########################################################### }}}1 ###########
 
+setopt Err_Exit
+
 local Download_Server="krischik,uiq3@shell.sourceforge.net";
+
+# Android Annotations uses an outdated version of maven.
+
+alias mvn="/opt/local/share/java/maven3/bin/mvn"
 
 pushd "AndroidAnnotations"
     mvn									    \

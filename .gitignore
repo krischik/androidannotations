@@ -25,4 +25,6 @@ proguard-project.txt
 #Others
 *.jar
 *.swp
+*.7z
+*~
 .backups
