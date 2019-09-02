@@ -32,6 +32,7 @@ local Download_Server="krischik,uiq3@shell.sourceforge.net";
 alias mvn="/opt/local/share/java/maven3/bin/mvn"
 
 pushd "AndroidAnnotations"
+    mvn clean
     mvn									    \
 	--define repo.id=UIQ3						    \
 	--define repo.url=file:///Work/HomePage/uiq3/htdocs/Repository	    \
